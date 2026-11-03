@@ -1,4 +1,8 @@
-.PHONY: help install dev dev-backend dev-frontend build up down logs health deploy
+.PHONY: help install dev dev-backend dev-frontend build up down logs health deploy deploy-env
+
+# Хост и директория для копирования .env (make deploy-env)
+HOST ?= admin@amzng
+REMOTE_DIR ?= ~/helper_srv_2.0
 
 help:
 	@echo "Цели:"
@@ -12,6 +16,7 @@ help:
 	@echo "  make logs           — логи контейнеров"
 	@echo "  make health         — curl /health"
 	@echo "  make deploy         — деплой на сервер (scripts/deploy.sh)"
+	@echo "  make deploy-env     — скопировать .env на хост $(HOST):$(REMOTE_DIR)"
 
 install:
 	cd backend && uv sync
@@ -45,3 +50,6 @@ health:
 
 deploy:
 	./scripts/deploy.sh
+
+deploy-env:
+	scp .env $(HOST):$(REMOTE_DIR)/.env
