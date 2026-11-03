@@ -1,0 +1,12 @@
+# Общий .dockerignore для контекста сборки из корня репо
+.git
+.env
+.env.*
+!.env.example
+node_modules
+dist
+.venv
+__pycache__
+*.pyc
+*.log
+.DS_Store

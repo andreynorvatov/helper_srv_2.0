@@ -1,0 +1,3 @@
+# Разрешаем build-скрипты нужных пакетов (pnpm 12+)
+allowBuilds:
+  esbuild: true
