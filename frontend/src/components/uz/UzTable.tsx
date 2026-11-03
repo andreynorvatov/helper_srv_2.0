@@ -54,7 +54,7 @@ export default function UzTable({ steps, selectedStepId, onSelect, onFieldChange
                   onSelect(s.id)
                 }}
                 className={`cursor-pointer transition-colors hover:bg-background ${
-                  selected ? 'bg-background ring-1 ring-inset ring-primary' : ''
+                  selected ? 'bg-background' : ''
                 }`}
               >
                 <td className="px-2 py-2 text-left border-b border-border">
@@ -67,7 +67,7 @@ export default function UzTable({ steps, selectedStepId, onSelect, onFieldChange
                     value={s.type}
                     onChange={(e) => onTypeChange(s.id, e.target.value as UzStepType)}
                     style={TYPE_STYLE[s.type]}
-                    className="min-w-[110px] cursor-pointer rounded-lg border border-transparent px-2.5 py-1.5 text-[13px] font-medium outline-none transition-all focus:ring-2 focus:ring-primary"
+                    className="min-w-[110px] cursor-pointer rounded-lg border border-transparent px-2.5 py-1.5 text-[13px] font-medium outline-none transition-all"
                   >
                     <option value="ramp">{TYPE_LABELS.ramp}</option>
                     <option value="stable">{TYPE_LABELS.stable}</option>
@@ -128,7 +128,7 @@ function CellInput({ value, onChange }: { value: number; onChange: (v: number) =
         const v = parseFloat(e.target.value)
         if (!Number.isNaN(v) && v >= 0) onChange(v)
       }}
-      className="w-full min-w-[64px] max-w-[110px] rounded-lg border border-transparent bg-background px-2 py-1.5 text-center text-sm font-medium outline-none transition-all hover:border-border focus:border-primary focus:ring-2 focus:ring-primary"
+      className="w-full min-w-[64px] max-w-[110px] rounded-lg border border-transparent bg-background px-2 py-1.5 text-center text-sm font-medium outline-none transition-all hover:border-border focus:border-primary"
     />
   )
 }
