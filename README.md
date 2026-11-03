@@ -1,4 +1,4 @@
-# Helper Service 2.0
+прои# Helper Service 2.0
 
 Веб-приложение: **FastAPI** (бек) + **React/Vite/TypeScript/Tailwind** (фронт).
 Бек получает данные из внешних API (ключи в `.env`), фронт отображает и считает на клиенте.
@@ -16,7 +16,18 @@ scripts/    deploy.sh
 
 Требования: Python 3.12 + [uv](https://docs.astral.sh/uv/), Node 22 + [pnpm](https://pnpm.io/).
 
-### Бек
+### Через Makefile (рекомендуется)
+
+```bash
+make install        # установить зависимости (uv sync + pnpm install)
+make dev            # запустить бек (:8000) + фронт (:5173) вместе
+make dev-backend    # только бек
+make dev-frontend   # только фронт
+```
+
+### Вручную
+
+Бек:
 
 ```bash
 cd backend
@@ -27,7 +38,7 @@ uv run uvicorn app.main:app --reload --port 8000
 
 Доступно: http://localhost:8000/docs (Swagger), http://localhost:8000/health
 
-### Фронт
+Фронт:
 
 ```bash
 cd frontend
