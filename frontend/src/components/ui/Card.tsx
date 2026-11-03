@@ -7,7 +7,7 @@ interface CardProps {
 
 export default function Card({ title, children }: CardProps) {
   return (
-    <section className="rounded-xl bg-surface p-6 shadow-sm border border-border">
+    <section className="rounded-xl bg-surface p-6 shadow-sm border border-border overflow-x-auto">
       {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
       {children}
     </section>

@@ -65,6 +65,26 @@ Vite dev-сервер проксирует `/api/*` на `http://localhost:8000`
 8. **Не ломай деплой-конфиги** (docker-compose.yml, nginx.conf, Dockerfile) без
    явной необходимости. Если меняешь — проверь `docker compose config`.
 
+## Темы фронтенда
+
+Фронт поддерживает светлую и тёмную темы. Правила обязательны для всех
+новых и изменяемых компонентов.
+
+- Тёмная тема — класс `.dark` на `<html>` (`@custom-variant dark` в
+  `frontend/src/index.css`). Цвета — семантические CSS-переменные в `:root`
+  (светлые) и `.dark` (тёмные), маппинг в Tailwind-утилиты через `@theme inline`.
+- Управление — `useTheme` + `ThemeProvider` (`frontend/src/hooks/useTheme.tsx`),
+  переключатель — `ThemeToggle` (`frontend/src/components/ui/ThemeToggle.tsx`).
+  Дефолт — системная тема, кнопка-иконка переключает на противоположную.
+  Выбор в `localStorage` (ключ `theme`). Инлайн-скрипт в `frontend/index.html`
+  ставит `.dark` до рендера — без FOUC.
+- **Не хардкодь** `bg-white`, `text-slate-*`, `bg-slate-*` и т.п. — только
+  семантические утилиты: `bg-background`, `bg-surface`, `text-foreground`,
+  `text-muted`, `border-border`, `bg-primary`/`text-primary-foreground`,
+  `bg-sidebar`/`text-sidebar-foreground`, `bg-sidebar-active`.
+- Новый цвет → добавь переменную в `:root` и `.dark` в `index.css`, затем
+  утилиту в `@theme inline`. Проверяй контраст в обеих темах.
+
 ## Как добавить функционал
 
 1. Понять, где живёт фича: бек (данные/логика сервера) или фронт (отображение/расчёты).

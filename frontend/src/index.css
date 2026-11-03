@@ -15,20 +15,40 @@
   --sidebar: #ffffff;
   --sidebar-foreground: #0f172a;
   --sidebar-active: #e2e8f0;
+  /* Калькулятор УЗ */
+  --chart-rate: #3b82f6;
+  --chart-cum: #059669;
+  --chart-registry: #ef4444;
+  --step-ramp: #b45309;
+  --step-ramp-bg: #fffbeb;
+  --step-stable: #2563eb;
+  --step-stable-bg: #eff6ff;
+  --danger: #dc2626;
+  --success: #059669;
 }
 
 /* Тёмная тема */
 .dark {
-  --background: #0f172a;
-  --surface: #1e293b;
-  --foreground: #f1f5f9;
-  --muted: #94a3b8;
-  --border: #334155;
-  --primary: #f1f5f9;
-  --primary-foreground: #0f172a;
-  --sidebar: #0f172a;
-  --sidebar-foreground: #e2e8f0;
-  --sidebar-active: #1e293b;
+  --background: #0b1220;
+  --surface: #1a2332;
+  --foreground: #e2e8f0;
+  --muted: #a3b3c9;
+  --border: #2d3a4d;
+  --primary: #e2e8f0;
+  --primary-foreground: #0b1220;
+  --sidebar: #0b1220;
+  --sidebar-foreground: #cbd5e1;
+  --sidebar-active: #1a2332;
+  /* Калькулятор УЗ */
+  --chart-rate: #58a6ff;
+  --chart-cum: #3fb950;
+  --chart-registry: #f85149;
+  --step-ramp: #d29922;
+  --step-ramp-bg: #1c1500;
+  --step-stable: #58a6ff;
+  --step-stable-bg: #0d1d3a;
+  --danger: #f85149;
+  --success: #3fb950;
 }
 
 /* Маппинг переменных в Tailwind-утилиты (bg-background, text-foreground и т.д.) */
