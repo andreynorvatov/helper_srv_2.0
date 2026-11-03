@@ -1,1 +1,46 @@
 @import "tailwindcss";
+
+/* Тёмная тема включается классом .dark на <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Светлая тема (по умолчанию) */
+:root {
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --foreground: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --primary: #0f172a;
+  --primary-foreground: #ffffff;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f172a;
+  --sidebar-active: #e2e8f0;
+}
+
+/* Тёмная тема */
+.dark {
+  --background: #0f172a;
+  --surface: #1e293b;
+  --foreground: #f1f5f9;
+  --muted: #94a3b8;
+  --border: #334155;
+  --primary: #f1f5f9;
+  --primary-foreground: #0f172a;
+  --sidebar: #0f172a;
+  --sidebar-foreground: #e2e8f0;
+  --sidebar-active: #1e293b;
+}
+
+/* Маппинг переменных в Tailwind-утилиты (bg-background, text-foreground и т.д.) */
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-active: var(--sidebar-active);
+}

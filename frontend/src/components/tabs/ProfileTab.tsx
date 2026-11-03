@@ -28,18 +28,18 @@ export default function ProfileTab() {
 
   return (
     <Card title="Расчёт профиля">
-      <p className="text-sm text-slate-600 mb-4">
+      <p className="text-sm text-muted mb-4">
         Заглушка: результат = a + b + c. Формула заменится позже.
       </p>
       <div className="flex flex-wrap gap-4 mb-4">
         {fields.map((field) => (
           <label key={field.label} className="flex flex-col gap-1">
-            <span className="text-sm text-slate-600">{field.label}</span>
+            <span className="text-sm text-muted">{field.label}</span>
             <input
               type="number"
               value={field.value}
               onChange={(e) => field.onChange(e.target.value)}
-              className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+              className="rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </label>
         ))}
@@ -47,7 +47,7 @@ export default function ProfileTab() {
       <Button onClick={calculate}>Рассчитать</Button>
       {result !== null && (
         <p className="mt-4 text-lg font-semibold">
-          Результат: <span className="text-slate-900">{result}</span>
+          Результат: <span className="text-foreground">{result}</span>
         </p>
       )}
     </Card>

@@ -20,12 +20,12 @@ export default function Tabs({ tabs, active, onChange }: TabsProps) {
           onClick={() => onChange(tab.id)}
           className={`relative flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
             active === tab.id
-              ? 'bg-slate-800 text-white'
-              : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+              ? 'bg-sidebar-active text-sidebar-foreground'
+              : 'text-muted hover:bg-sidebar-active hover:text-sidebar-foreground'
           }`}
         >
           {active === tab.id && (
-            <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-white" />
+            <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-primary" />
           )}
           {tab.label}
         </button>

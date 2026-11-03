@@ -12,13 +12,13 @@ export default function BalanceTab() {
 
   return (
     <Card title="Баланс OpenRouter">
-      <p className="text-sm text-slate-600 mb-4">
-        Мок-данные. Эндпоинт <code className="bg-slate-100 px-1 rounded">GET /api/v1/balance</code> ещё не готов.
+      <p className="text-sm text-muted mb-4">
+        Мок-данные. Эндпоинт <code className="bg-surface px-1 rounded">GET /api/v1/balance</code> ещё не готов.
       </p>
       <dl className="space-y-3">
         {rows.map((row) => (
-          <div key={row.label} className="flex items-center justify-between border-b border-slate-100 pb-2">
-            <dt className="text-sm text-slate-600">{row.label}</dt>
+          <div key={row.label} className="flex items-center justify-between border-b border-border pb-2">
+            <dt className="text-sm text-muted">{row.label}</dt>
             <dd className="text-lg font-semibold">{row.value}</dd>
           </div>
         ))}

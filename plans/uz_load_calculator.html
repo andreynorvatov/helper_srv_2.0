@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор УЗ</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js">
+    </script>
+    <style>
+        :root {
+            --bg: #f1f5f9;
+            --card-bg: #fff;
+            --card-border: rgba(0,0,0,0.08);
+            --text: #1e293b;
+            --text-heading: #0f172a;
+            --text-muted: #64748b;
+            --text-dim: #94a3b8;
+            --divider: #e2e8f0;
+            --divider-light: #f1f5f9;
+            --btn-bg: transparent;
+            --btn-border: #e2e8f0;
+            --btn-text: #64748b;
+            --btn-hover-bg: #f8fafc;
+            --btn-hover-border: #cbd5e1;
+            --input-bg: #f8fafc;
+            --input-border: #e2e8f0;
+            --input-focus: #3b82f6;
+            --table-header-bg: #f8fafc;
+            --table-header-color: #475569;
+            --table-header-border: #e2e8f0;
+            --row-hover: #f8fafc;
+            --row-selected: #eff6ff;
+            --row-selected-hover: #dbeafe;
+            --summary-bg: #f8fafc;
+            --blue: #3b82f6;
+            --blue-hover: #2563eb;
+            --red: #ef4444;
+            --red-hover: #dc2626;
+            --green: #059669;
+            --orange: #b45309;
+            --amber-bg: #fffbeb;
+            --blue-bg: #eff6ff;
+            --spinner-track: #e2e8f0;
+            --spinner-active: #3b82f6;
+            --step-num-bg: #e2e8f0;
+            --step-num-color: #475569;
+            --delete-bg: transparent;
+            --delete-color: #94a3b8;
+            --delete-hover-bg: #fef2f2;
+            --delete-hover-color: #dc2626;
+            --chart-grid: rgba(0,0,0,0.06);
+            --chart-rate: #f59e0b;
+            --chart-cum: #059669;
+            --chart-registry: #ef4444;
+            --uz-cum-color: #047857;
+            --uz-remain-color: #b45309;
+            --uz-remain-negative: #dc2626;
+            --time-cell-color: #475569;
+            --calc-cell-color: #0f172a;
+        }
+        [data-theme="dark"] {
+            --bg: #0f1117;
+            --card-bg: #161b22;
+            --card-border: #30363d;
+            --text: #e1e4e8;
+            --text-heading: #e1e4e8;
+            --text-muted: #8b949e;
+            --text-dim: #484f58;
+            --divider: #21262d;
+            --divider-light: #21262d;
+            --btn-bg: #21262d;
+            --btn-border: #30363d;
+            --btn-text: #c9d1d9;
+            --btn-hover-bg: #30363d;
+            --btn-hover-border: #30363d;
+            --input-bg: #0d1117;
+            --input-border: #30363d;
+            --input-focus: #58a6ff;
+            --table-header-bg: #0d1117;
+            --table-header-color: #8b949e;
+            --table-header-border: #30363d;
+            --row-hover: #1c2128;
+            --row-selected: #0d1d3a;
+            --row-selected-hover: #0d1d3a;
+            --summary-bg: #0d1117;
+            --blue: #58a6ff;
+            --blue-hover: #3b82f6;
+            --red: #f85149;
+            --red-hover: #da3633;
+            --green: #3fb950;
+            --orange: #d29922;
+            --amber-bg: #1c1500;
+            --blue-bg: #0d1d3a;
+            --step-num-bg: #30363d;
+            --step-num-color: #8b949e;
+            --delete-bg: transparent;
+            --delete-color: #484f58;
+            --delete-hover-bg: #2d1517;
+            --delete-hover-color: #f85149;
+            --chart-grid: rgba(255,255,255,0.06);
+            --chart-rate: #d29922;
+            --chart-cum: #3fb950;
+            --chart-registry: #f85149;
+            --uz-cum-color: #3fb950;
+            --uz-remain-color: #d29922;
+            --uz-remain-negative: #f85149;
+            --time-cell-color: #8b949e;
+            --calc-cell-color: #e1e4e8;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 24px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            transition: background .25s, color .25s;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* ─── Header ─── */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text-heading);
+        }
+
+        .registry-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 10px 18px;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .registry-group label {
+            font-weight: 600;
+            font-size: 15px;
+            white-space: nowrap;
+            color: var(--text-muted);
+        }
+
+        .registry-group input {
+            width: 140px;
+            padding: 7px 12px;
+            font-size: 16px;
+            font-weight: 600;
+            border: 2px solid var(--divider);
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s;
+            text-align: right;
+            background: var(--input-bg);
+            color: var(--text);
+        }
+
+        .registry-group input:focus {
+            border-color: var(--input-focus);
+        }
+
+        /* ─── Card ─── */
+        .card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            padding: 20px 24px 24px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            transition: background .25s;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-heading);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ─── Table ─── */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 820px;
+        }
+
+        thead th {
+            background: var(--table-header-bg);
+            padding: 10px 10px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--table-header-color);
+            border-bottom: 2px solid var(--table-header-border);
+            white-space: nowrap;
+        }
+
+        thead th:first-child {
+            text-align: left;
+            padding-left: 4px;
+        }
+
+        tbody tr {
+            transition: background 0.15s;
+            cursor: pointer;
+        }
+
+        tbody tr:hover {
+            background: var(--row-hover);
+        }
+
+        tbody tr.selected {
+            background: var(--row-selected);
+            outline: 2px solid var(--blue);
+            outline-offset: -2px;
+        }
+
+        tbody tr.selected:hover {
+            background: var(--row-selected-hover);
+        }
+
+        tbody td {
+            padding: 6px 6px;
+            text-align: center;
+            border-bottom: 1px solid var(--divider-light);
+            vertical-align: middle;
+        }
+
+        tbody td:first-child {
+            text-align: left;
+            padding-left: 4px;
+        }
+
+        /* ─── Inputs inside table ─── */
+        .cell-input {
+            width: 100%;
+            min-width: 52px;
+            max-width: 90px;
+            padding: 6px 8px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            outline: none;
+            background: var(--input-bg);
+            text-align: center;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .cell-input:focus {
+            border-color: var(--input-focus);
+            background: var(--card-bg);
+        }
+
+        .cell-input:hover {
+            background: var(--row-hover);
+        }
+
+        .type-select {
+            padding: 6px 8px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            outline: none;
+            background: var(--input-bg);
+            cursor: pointer;
+            transition: border-color 0.2s;
+            min-width: 100px;
+        }
+
+        .type-select:focus {
+            border-color: var(--input-focus);
+        }
+
+        .type-select.ramp {
+            color: var(--orange);
+            background: var(--amber-bg);
+        }
+
+        .type-select.stable {
+            color: var(--blue);
+            background: var(--blue-bg);
+        }
+
+        /* ─── Calculated cells ─── */
+        .calc-cell {
+            font-weight: 600;
+            font-size: 13px;
+            padding: 6px 8px;
+            white-space: nowrap;
+        }
+
+        .calc-cell.uz-period {
+            color: var(--calc-cell-color);
+        }
+
+        .calc-cell.uz-cum {
+            color: var(--uz-cum-color);
+        }
+
+        .calc-cell.uz-remain {
+            color: var(--uz-remain-color);
+        }
+
+        .calc-cell.uz-remain.negative {
+            color: var(--uz-remain-negative);
+        }
+
+        .calc-cell.time-cell {
+            color: var(--time-cell-color);
+        }
+
+        /* ─── Delete button ─── */
+        .delete-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 8px;
+            background: var(--delete-bg);
+            color: var(--delete-color);
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-btn:hover {
+            background: var(--delete-hover-bg);
+            color: var(--delete-hover-color);
+        }
+
+        /* ─── Controls ─── */
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--blue-hover);
+        }
+
+        .btn-danger {
+            background: var(--red);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: var(--red-hover);
+        }
+
+        .btn-outline {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border: 2px solid var(--btn-border);
+        }
+
+        .btn-outline:hover {
+            background: var(--btn-hover-bg);
+            border-color: var(--btn-hover-border);
+        }
+
+        /* ─── Chart ─── */
+        .chart-wrap {
+            position: relative;
+            width: 100%;
+            height: 380px;
+        }
+
+        .chart-wrap canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* ─── Summary bar ─── */
+        .summary-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 32px;
+            margin-top: 16px;
+            padding: 14px 18px;
+            background: var(--summary-bg);
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .summary-item .label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .summary-item .value {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text-heading);
+        }
+
+        .summary-item .value.warn {
+            color: var(--red);
+        }
+
+        .summary-item .value.ok {
+            color: var(--green);
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .registry-group {
+                justify-content: space-between;
+            }
+
+            .card {
+                padding: 14px;
+            }
+
+            .chart-wrap {
+                height: 260px;
+            }
+        }
+
+        /* ─── Row type indicator ─── */
+        .step-num {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            line-height: 22px;
+            text-align: center;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            background: var(--step-num-bg);
+            color: var(--step-num-color);
+            margin-right: 4px;
+        }
+
+        /* ─── Tooltip fix ─── */
+        .no-select {
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- ===== HEADER ===== -->
+        <div class="header">
+            <h1>📊 Калькулятор УЗ</h1>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <a href="/static/index.html" class="btn btn-outline" style="text-decoration:none;">← На главную</a>
+                <button class="btn btn-outline" id="themeToggle" style="font-family:inherit;">☀️ Светлая</button>
+                <div class="registry-group">
+                    <label for="registryInput">Реестр УЗ:</label>
+                    <input type="number" id="registryInput" value="8000000" min="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TABLE CARD ===== -->
+        <div class="card">
+            <div class="card-title">
+                <span>📋 Шаги нагрузки</span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:30px;">#</th>
+                            <th style="min-width:110px;">Тип шага</th>
+                            <th>Мин</th>
+                            <th>Старт</th>
+                            <th>Стоп</th>
+                            <th style="min-width:100px;">УЗ за период</th>
+                            <th style="min-width:110px;">УЗ нарастающим итогом</th>
+                            <th style="min-width:90px;">УЗ остаток</th>
+                            <th style="min-width:80px;">Время, мин</th>
+                            <th style="min-width:70px;">Время, ч</th>
+                            <th style="width:36px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Rows rendered by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" id="addBtn">＋ Добавить шаг</button>
+                <button class="btn btn-outline" id="distributeRemainderBtn">🎯 Распределить остаток УЗ на последний шаг</button>
+                <button class="btn btn-outline" id="distributeBtn">📤 Распределить все на 1000</button>
+            </div>
+
+            <div class="summary-bar" id="summaryBar">
+                <div class="summary-item">
+                    <span class="label">Всего УЗ за период:</span>
+                    <span class="value" id="totalUZ">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Покрытие реестра:</span>
+                    <span class="value" id="coveragePct">0%</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Общее время:</span>
+                    <span class="value" id="totalTime">0 мин</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Остаток УЗ:</span>
+                    <span class="value" id="remainUZ">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CHART CARD ===== -->
+        <div class="card">
+            <div class="card-title">
+                <span>📈 График нагрузки</span>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="chartCanvas"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================================
+        //  STATE
+        // ============================================================
+        const DEFAULT_STEPS = [
+            { id: 0, type: 'ramp', min: 15, start: 0, stop: 100 },
+        ];
+
+        let steps = [];
+        let nextId = 0;
+        let chart = null;
+        let selectedStepId = null;
+
+        // DOM refs
+        const registryInput = document.getElementById('registryInput');
+        const tbody = document.getElementById('tableBody');
+        const addBtn = document.getElementById('addBtn');
+        const distributeRemainderBtn = document.getElementById('distributeRemainderBtn');
+        const distributeBtn = document.getElementById('distributeBtn');
+        const totalUZEl = document.getElementById('totalUZ');
+        const coveragePctEl = document.getElementById('coveragePct');
+        const totalTimeEl = document.getElementById('totalTime');
+        const remainUZEl = document.getElementById('remainUZ');
+
+        // ============================================================
+        //  HELPERS
+        // ============================================================
+        function hexToRgba(hex, alpha) {
+            if (!hex || hex === 'transparent') return 'rgba(0,0,0,0)';
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r},${g},${b},${alpha})`;
+        }
+
+        function fmt(n) {
+            if (n === undefined || n === null || isNaN(n)) return '0';
+            return Number(n).toLocaleString('ru-RU');
+        }
+
+        function fmtPct(n) {
+            return Number(n).toFixed(1) + '%';
+        }
+
+        function getRegistry() {
+            const v = parseFloat(registryInput.value);
+            return isNaN(v) || v < 0 ? 0 : v;
+        }
+
+        function calcTenth(cumUZ, registry) {
+            if (registry <= 0) return '—';
+            const tenth = Math.ceil(cumUZ / (registry / 10));
+            if (tenth <= 0) return '0/10';
+            if (tenth >= 10) return '10/10';
+            return tenth + '/10';
+        }
+
+        function fmtHours(minutes) {
+            if (minutes === undefined || minutes === null || isNaN(minutes)) return '0ч 0мин';
+            const h = Math.floor(minutes / 60);
+            const m = Math.floor(minutes % 60);
+            if (h === 0) return m + 'мин';
+            if (m === 0) return h + 'ч';
+            return h + 'ч ' + m + 'мин';
+        }
+
+        // ============================================================
+        //  CALCULATE
+        // ============================================================
+        function calculate() {
+            const registry = getRegistry();
+            let cumUZ = 0;
+            let cumTime = 0;
+
+            steps.forEach((s) => {
+                const avg = (s.start + s.stop) / 2;
+                s.uzPerPeriod = avg * s.min * 60;
+                cumUZ += s.uzPerPeriod;
+                s.uzCumulative = cumUZ;
+                s.uzRemaining = registry - cumUZ;
+                cumTime += s.min;
+                s.time = cumTime;
+            });
+
+            return { registry, totalUZ: cumUZ, totalTime: cumTime };
+        }
+
+        // ============================================================
+        //  RENDER TABLE
+        // ============================================================
+        function renderTable() {
+            const { registry, totalUZ, totalTime } = calculate();
+
+            tbody.innerHTML = '';
+
+            steps.forEach((s, idx) => {
+                const tr = document.createElement('tr');
+                tr.dataset.stepId = s.id;
+                tr.classList.toggle('selected', s.id === selectedStepId);
+
+                // Click to select row
+                tr.addEventListener('click', (e) => {
+                    // Ignore clicks on inputs, selects, and buttons
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'BUTTON') return;
+                    selectedStepId = s.id;
+                    renderTable();
+                    renderChart();
+                });
+
+                // # column
+                const numTd = document.createElement('td');
+                const numSpan = document.createElement('span');
+                numSpan.className = 'step-num';
+                numSpan.textContent = idx + 1;
+                numTd.appendChild(numSpan);
+                tr.appendChild(numTd);
+
+                // Type select
+                const typeTd = document.createElement('td');
+                const sel = document.createElement('select');
+                sel.className = 'type-select ' + s.type;
+                sel.dataset.id = s.id;
+
+                const optRamp = document.createElement('option');
+                optRamp.value = 'ramp';
+                optRamp.textContent = 'Рампап';
+                const optStable = document.createElement('option');
+                optStable.value = 'stable';
+                optStable.textContent = 'Стабильная нагрузка';
+
+                sel.appendChild(optRamp);
+                sel.appendChild(optStable);
+                sel.value = s.type;
+
+                sel.addEventListener('change', () => {
+                    s.type = sel.value;
+                    sel.className = 'type-select ' + s.type;
+                    // If switched to stable, sync stop = start
+                    if (s.type === 'stable') {
+                        s.stop = s.start;
+                    }
+                    renderAll();
+                });
+
+                typeTd.appendChild(sel);
+                tr.appendChild(typeTd);
+
+                // Min
+                tr.appendChild(makeInputTd(s.id, 'min', s.min, 'number'));
+
+                // Start
+                tr.appendChild(makeInputTd(s.id, 'start', s.start, 'number'));
+
+                // Stop
+                tr.appendChild(makeInputTd(s.id, 'stop', s.stop, 'number'));
+
+                // УЗ за период
+                const periodTd = document.createElement('td');
+                periodTd.className = 'calc-cell uz-period';
+                periodTd.dataset.stepId = s.id;
+                periodTd.dataset.field = 'uzPerPeriod';
+                periodTd.textContent = fmt(s.uzPerPeriod);
+                tr.appendChild(periodTd);
+
+                // УЗ нарастающим итогом
+                const cumTd = document.createElement('td');
+                cumTd.className = 'calc-cell uz-cum';
+                cumTd.dataset.stepId = s.id;
+                cumTd.dataset.field = 'uzCumulative';
+                cumTd.textContent = fmt(s.uzCumulative);
+                tr.appendChild(cumTd);
+
+                // УЗ остаток
+                const remainTd = document.createElement('td');
+                remainTd.className = 'calc-cell uz-remain' + (s.uzRemaining < 0 ? ' negative' : '');
+                remainTd.dataset.stepId = s.id;
+                remainTd.dataset.field = 'uzRemaining';
+                remainTd.textContent = fmt(s.uzRemaining);
+                tr.appendChild(remainTd);
+
+                // Время, мин
+                const timeTd = document.createElement('td');
+                timeTd.className = 'calc-cell time-cell';
+                timeTd.dataset.stepId = s.id;
+                timeTd.dataset.field = 'time';
+                timeTd.textContent = s.time;
+                tr.appendChild(timeTd);
+
+                // Время, ч
+                const hoursTd = document.createElement('td');
+                hoursTd.className = 'calc-cell time-cell';
+                hoursTd.dataset.stepId = s.id;
+                hoursTd.dataset.field = 'hours';
+                hoursTd.textContent = fmtHours(s.time);
+                tr.appendChild(hoursTd);
+
+                // Delete button
+                const delTd = document.createElement('td');
+                const delBtn = document.createElement('button');
+                delBtn.className = 'delete-btn';
+                delBtn.innerHTML = '✕';
+                delBtn.title = 'Удалить шаг';
+                delBtn.addEventListener('click', () => {
+                    removeStep(s.id);
+                });
+                delTd.appendChild(delBtn);
+                tr.appendChild(delTd);
+
+                tbody.appendChild(tr);
+            });
+
+            updateSummary();
+        }
+
+        function makeInputTd(id, field, value, type) {
+            const td = document.createElement('td');
+            const input = document.createElement('input');
+            input.type = type;
+            input.className = 'cell-input';
+            input.dataset.id = id;
+            input.dataset.field = field;
+            input.value = value;
+
+            input.addEventListener('input', () => {
+                const step = steps.find(s => s.id === id);
+                if (!step) return;
+                const v = parseFloat(input.value);
+                if (!isNaN(v) && v >= 0) {
+                    step[field] = v;
+                    // If stable load, sync stop = start
+                    if (field === 'start' && step.type === 'stable') {
+                        step.stop = v;
+                    }
+                }
+                // Partial update: recalculate + update only calculated cells + chart
+                updateCalculatedCells();
+            });
+
+            td.appendChild(input);
+            return td;
+        }
+
+        // ============================================================
+        //  PARTIAL UPDATE (no focus loss)
+        // ============================================================
+        function updateCalculatedCells() {
+            const { registry, totalUZ, totalTime } = calculate();
+
+            // Update each step's calculated cells in-place
+            steps.forEach((s) => {
+                setCalcCell(s.id, 'uzPerPeriod', fmt(s.uzPerPeriod));
+                setCalcCell(s.id, 'uzCumulative', fmt(s.uzCumulative));
+
+                const remainEl = getCalcCell(s.id, 'uzRemaining');
+                if (remainEl) {
+                    remainEl.textContent = fmt(s.uzRemaining);
+                    remainEl.className = 'calc-cell uz-remain' + (s.uzRemaining < 0 ? ' negative' : '');
+                }
+
+                setCalcCell(s.id, 'time', String(s.time));
+                setCalcCell(s.id, 'hours', fmtHours(s.time));
+            });
+
+            // Sync stop input for stable type when start changed
+            steps.forEach((s) => {
+                if (s.type === 'stable') {
+                    const stopInput = document.querySelector(`input[data-id="${s.id}"][data-field="stop"]`);
+                    if (stopInput && parseFloat(stopInput.value) !== s.stop) {
+                        stopInput.value = s.stop;
+                    }
+                }
+            });
+
+            updateSummary();
+            renderChart();
+        }
+
+        function getCalcCell(stepId, field) {
+            return document.querySelector(`[data-step-id="${stepId}"][data-field="${field}"]`);
+        }
+
+        function setCalcCell(stepId, field, text) {
+            const el = getCalcCell(stepId, field);
+            if (el) el.textContent = text;
+        }
+
+        function updateSummary() {
+            const { registry, totalUZ, totalTime } = calculate();
+            totalUZEl.textContent = fmt(totalUZ);
+            totalTimeEl.textContent = totalTime + ' мин';
+            remainUZEl.textContent = fmt(registry - totalUZ);
+            remainUZEl.className = 'value' + (registry - totalUZ < 0 ? ' warn' : ' ok');
+
+            const pct = registry > 0 ? (totalUZ / registry) * 100 : 0;
+            coveragePctEl.textContent = fmtPct(pct);
+            coveragePctEl.className = 'value' + (pct > 100 ? ' warn' : ' ok');
+        }
+
+        // ============================================================
+        //  RENDER CHART
+        // ============================================================
+        function renderChart() {
+            const rateData = [];
+            const cumData = [];
+            let time = 0;
+
+            steps.forEach((s) => {
+                // Rate profile: start point
+                rateData.push({ x: time, y: s.start });
+                time += s.min;
+                // Rate profile: end point
+                rateData.push({ x: time, y: s.stop });
+
+                // Cumulative at end of step
+                cumData.push({ x: time, y: s.uzCumulative });
+            });
+
+            const registry = getRegistry();
+
+            const config = {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'УЗ rate',
+                        data: rateData,
+                        borderColor: getCSSVar('--chart-rate'),
+                        backgroundColor: hexToRgba(getCSSVar('--chart-rate'), 0.08),
+                        fill: true,
+                        tension: 0,
+                        pointRadius: 3,
+                        pointBackgroundColor: getCSSVar('--chart-rate'),
+                        yAxisID: 'y',
+                        order: 2,
+                    }, {
+                        label: 'УЗ нарастающим итогом',
+                        data: cumData,
+                        borderColor: getCSSVar('--chart-cum'),
+                        backgroundColor: hexToRgba(getCSSVar('--chart-cum'), 0.08),
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointBackgroundColor: getCSSVar('--chart-cum'),
+                        yAxisID: 'y1',
+                        order: 1,
+                    }, {
+                        label: 'Реестр УЗ',
+                        data: [
+                            { x: 0, y: registry },
+                            { x: Math.max(time || 1, 1), y: registry },
+                        ],
+                        borderColor: getCSSVar('--chart-registry'),
+                        borderDash: [6, 4],
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false,
+                        tension: 0,
+                        yAxisID: 'y1',
+                        order: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'nearest',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            title: {
+                                display: true,
+                                text: 'Время, мин',
+                                font: { weight: 'bold', size: 13 },
+                            },
+                            min: 0,
+                            grid: { color: getCSSVar('--chart-grid') },
+                            ticks: {
+                                stepSize: 5,
+                            },
+                        },
+                        xHours: {
+                            type: 'linear',
+                            position: 'top',
+                            title: {
+                                display: true,
+                                text: 'Время, ч',
+                                font: { weight: 'bold', size: 13 },
+                            },
+                            min: 0,
+                            grid: { drawOnChartArea: false },
+                            ticks: {
+                                callback: function(value) {
+                                    return (value / 60).toFixed(1);
+                                },
+                                stepSize: 5,
+                            },
+                        },
+                        y: {
+                            type: 'linear',
+                            title: {
+                                display: true,
+                                text: 'УЗ rate',
+                                font: { weight: 'bold', size: 13 },
+                            },
+                            beginAtZero: true,
+                            position: 'left',
+                            grid: { color: getCSSVar('--chart-grid') },
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('ru-RU');
+                                }
+                            },
+                        },
+                        y1: {
+                            type: 'linear',
+                            title: {
+                                display: true,
+                                text: 'УЗ cumulative',
+                                font: { weight: 'bold', size: 13 },
+                            },
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+                                    if (value >= 1000) return (value / 1000).toFixed(0) + 'K';
+                                    return value.toLocaleString('ru-RU');
+                                }
+                            },
+                        },
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 16,
+                                font: { size: 12, weight: '500' },
+                            },
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    const dsLabel = ctx.dataset.label || '';
+                                    const x = ctx.parsed.x;
+                                    const y = ctx.parsed.y;
+                                    const h = (x / 60).toFixed(1);
+                                    if (dsLabel === 'Реестр УЗ') {
+                                        return dsLabel + ': ' + fmt(y);
+                                    }
+                                    if (dsLabel === 'УЗ rate') {
+                                        return 'Время ' + x + ' мин (' + h + ' ч) → rate: ' + fmt(y) + ' УЗ/мин';
+                                    }
+                                    return dsLabel + ': ' + fmt(y) + ' УЗ (время ' + x + ' мин / ' + h + ' ч)';
+                                }
+                            }
+                        }
+                    },
+                },
+            };
+
+            const ctx = document.getElementById('chartCanvas').getContext('2d');
+
+            if (chart) {
+                chart.data = config.data;
+                chart.update('none');
+            } else {
+                chart = new Chart(ctx, config);
+            }
+        }
+
+        // ============================================================
+        //  RENDER ALL
+        // ============================================================
+        function renderAll() {
+            renderTable();
+            renderChart();
+        }
+
+        // ============================================================
+        //  MUTATIONS
+        // ============================================================
+        function addStep() {
+            // Find insertion point: after selected step, or at end
+            let insertIdx = steps.length;
+            let refStep = steps.length > 0 ? steps[steps.length - 1] : null;
+
+            if (selectedStepId !== null) {
+                const selIdx = steps.findIndex(s => s.id === selectedStepId);
+                if (selIdx !== -1) {
+                    insertIdx = selIdx + 1;
+                    refStep = steps[selIdx];
+                }
+            }
+
+            const newStep = {
+                id: nextId++,
+                type: 'ramp',
+                min: 5,
+                start: refStep ? refStep.stop : 0,
+                stop: refStep ? refStep.stop + 100 : 400,
+            };
+
+            steps.splice(insertIdx, 0, newStep);
+            selectedStepId = newStep.id;
+            renderAll();
+        }
+
+        function removeStep(id) {
+            if (steps.length <= 1) return;
+            const idx = steps.findIndex(s => s.id === id);
+            steps = steps.filter(s => s.id !== id);
+            if (selectedStepId === id) {
+                selectedStepId = null;
+            }
+            renderAll();
+        }
+
+        function distributeRemainderToLastStep() {
+            if (steps.length === 0) return;
+            const { registry, totalUZ } = calculate();
+            const remainder = registry - totalUZ;
+            if (Math.abs(remainder) < 1) return; // Нечего распределять
+
+            const lastStep = steps[steps.length - 1];
+            // Средняя скорость последнего шага (УЗ/мин)
+            const rate = lastStep.type === 'stable'
+                ? lastStep.start
+                : (lastStep.start + lastStep.stop) / 2;
+
+            if (rate > 0) {
+                // Продлеваем последний шаг, чтобы он покрыл остаток реестра
+                const deltaMin = remainder / (rate * 60);
+                lastStep.min = Math.max(1, Math.round(lastStep.min + deltaMin));
+            } else {
+                // Нулевая скорость: поднимаем нагрузку последнего шага
+                const lastUZ = lastStep.uzPerPeriod;
+                const newUZ = Math.max(0, lastUZ + remainder);
+                const min = Math.max(lastStep.min, 1);
+                if (lastStep.type === 'stable') {
+                    lastStep.start = lastStep.stop = newUZ / (min * 60);
+                } else {
+                    lastStep.stop = Math.max(0, (2 * newUZ) / (min * 60) - lastStep.start);
+                }
+            }
+            renderAll();
+        }
+
+        function distributeAllTo1000() {
+            const registry = getRegistry();
+            // Step 1: Рампап 15 min, 0 → 1000
+            const rampUZ = ((0 + 1000) / 2) * 15 * 60; // 450,000
+            const remaining = Math.max(0, registry - rampUZ);
+            // Step 2: Стабильная нагрузка at rate 1000
+            const stableMin = Math.floor(remaining / (1000 * 60));
+
+            steps = [
+                { id: nextId++, type: 'ramp', min: 15, start: 0, stop: 1000 },
+                { id: nextId++, type: 'stable', min: stableMin, start: 1000, stop: 1000 },
+            ];
+            renderAll();
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        registryInput.addEventListener('input', updateCalculatedCells);
+        addBtn.addEventListener('click', addStep);
+        distributeRemainderBtn.addEventListener('click', distributeRemainderToLastStep);
+        distributeBtn.addEventListener('click', distributeAllTo1000);
+
+        // Keyboard shortcut: Enter to add step
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+                addStep();
+            }
+        });
+
+        // Bootstrap
+        steps = DEFAULT_STEPS.map(s => ({ ...s }));
+        nextId = steps.length;
+        registryInput.value = 8000000;
+        renderAll();
+
+        // ============================================================
+        //  THEME TOGGLE
+        // ============================================================
+        function getCSSVar(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.getElementById('themeToggle');
+            const isLight = html.getAttribute('data-theme') === 'light';
+            html.setAttribute('data-theme', isLight ? 'dark' : 'light');
+            btn.textContent = isLight ? '☀️ Светлая' : '🌙 Тёмная';
+            localStorage.setItem('uz-theme', isLight ? 'dark' : 'light');
+            // re-render chart with new theme colors
+            renderChart();
+        }
+
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+        (function initTheme() {
+            const saved = localStorage.getItem('uz-theme');
+            if (saved) {
+                document.documentElement.setAttribute('data-theme', saved);
+                const btn = document.getElementById('themeToggle');
+                if (btn) btn.textContent = saved === 'light' ? '☀️ Светлая' : '🌙 Тёмная';
+            }
+        })();
+    </script>
+
+</body>
+</html>
