@@ -23,6 +23,18 @@ export interface Balance {
   total_usage: number
   /** Баланс аккаунта: остаток (total_credits - total_usage) */
   remaining_credits: number
+  /** Курс USD → RUB (null — курс недоступен) */
+  usd_rub_rate: number | null
+  /** Рублёвые эквиваленты (null — курс недоступен) */
+  rub_credits: number | null
+  rub_limit: number | null
+  rub_usage: number | null
+  rub_usage_daily: number | null
+  rub_usage_weekly: number | null
+  rub_usage_monthly: number | null
+  rub_total_credits: number | null
+  rub_total_usage: number | null
+  rub_remaining_credits: number | null
 }
 
 export type UzStepType = 'ramp' | 'stable'

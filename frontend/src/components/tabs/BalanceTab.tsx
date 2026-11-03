@@ -11,6 +11,21 @@ function fmtMoney(value: number): string {
   }).format(value)
 }
 
+function fmtRub(value: number | null): string | null {
+  if (value === null) return null
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'currency',
+    currency: 'RUB',
+    maximumFractionDigits: 0,
+  }).format(value)
+}
+
+interface MoneyRow {
+  label: string
+  value: string
+  rub: number | null
+}
+
 export default function BalanceTab() {
   const { balance, loading, error, refresh } = useBalance()
 
@@ -44,23 +59,32 @@ export default function BalanceTab() {
   const lowBalance = balance.limit > 0 && usagePct >= 80
   const barColor = lowBalance ? 'var(--danger)' : 'var(--success)'
 
-  const rows: Array<{ label: string; value: string }> = [
-    { label: 'Остаток', value: unlimited ? 'Без лимита' : fmtMoney(balance.credits ?? 0) },
-    { label: 'Лимит', value: unlimited ? 'Без лимита' : fmtMoney(balance.limit) },
-    { label: 'Потрачено всего', value: fmtMoney(balance.usage) },
+  const rows: MoneyRow[] = [
+    {
+      label: 'Остаток',
+      value: unlimited ? 'Без лимита' : fmtMoney(balance.credits ?? 0),
+      rub: unlimited ? null : balance.rub_credits,
+    },
+    { label: 'Лимит', value: unlimited ? 'Без лимита' : fmtMoney(balance.limit), rub: unlimited ? null : balance.rub_limit },
+    { label: 'Потрачено всего', value: fmtMoney(balance.usage), rub: balance.rub_usage },
   ]
 
-  const usageRows: Array<{ label: string; value: string }> = [
-    { label: 'За сегодня', value: fmtMoney(balance.usage_daily) },
-    { label: 'За неделю', value: fmtMoney(balance.usage_weekly) },
-    { label: 'За месяц', value: fmtMoney(balance.usage_monthly) },
+  const usageRows: MoneyRow[] = [
+    { label: 'За сегодня', value: fmtMoney(balance.usage_daily), rub: balance.rub_usage_daily },
+    { label: 'За неделю', value: fmtMoney(balance.usage_weekly), rub: balance.rub_usage_weekly },
+    { label: 'За месяц', value: fmtMoney(balance.usage_monthly), rub: balance.rub_usage_monthly },
   ]
 
-  const accountRows: Array<{ label: string; value: string }> = [
-    { label: 'Всего кредитов', value: fmtMoney(balance.total_credits) },
-    { label: 'Потрачено', value: fmtMoney(balance.total_usage) },
-    { label: 'Остаток', value: fmtMoney(balance.remaining_credits) },
+  const accountRows: MoneyRow[] = [
+    { label: 'Всего кредитов', value: fmtMoney(balance.total_credits), rub: balance.rub_total_credits },
+    { label: 'Потрачено', value: fmtMoney(balance.total_usage), rub: balance.rub_total_usage },
+    { label: 'Остаток', value: fmtMoney(balance.remaining_credits), rub: balance.rub_remaining_credits },
   ]
+
+  const rateLabel =
+    balance.usd_rub_rate !== null
+      ? `Курс: 1 USD ≈ ${fmtRub(balance.usd_rub_rate) ?? balance.usd_rub_rate}`
+      : null
 
   return (
     <Card title="Баланс OpenRouter">
@@ -68,6 +92,7 @@ export default function BalanceTab() {
         <p className="text-sm text-muted">
           {balance.label ? `Ключ: ${balance.label}` : 'Баланс ключа OpenRouter'}
           {balance.is_free_tier ? ' · бесплатный тариф' : ''}
+          {rateLabel ? ` · ${rateLabel}` : ''}
         </p>
         <Button onClick={() => void refresh()} disabled={loading} className="shrink-0">
           {loading ? 'Обновление…' : '↻ Обновить'}
@@ -80,7 +105,12 @@ export default function BalanceTab() {
         {rows.map((row) => (
           <div key={row.label} className="flex items-center justify-between border-b border-border pb-2">
             <dt className="text-sm text-muted">{row.label}</dt>
-            <dd className="text-lg font-semibold">{row.value}</dd>
+            <dd className="text-right">
+              <span className="text-lg font-semibold">{row.value}</span>
+              {row.rub !== null && (
+                <span className="block text-xs text-muted">≈ {fmtRub(row.rub)}</span>
+              )}
+            </dd>
           </div>
         ))}
       </dl>
@@ -91,6 +121,9 @@ export default function BalanceTab() {
           <div key={row.label} className="rounded-lg border border-border bg-background p-4">
             <dt className="text-xs font-medium text-muted">{row.label}</dt>
             <dd className="mt-1 text-lg font-bold text-foreground">{row.value}</dd>
+            {row.rub !== null && (
+              <dd className="text-xs text-muted">≈ {fmtRub(row.rub)}</dd>
+            )}
           </div>
         ))}
       </dl>
@@ -101,6 +134,9 @@ export default function BalanceTab() {
           <div key={row.label} className="rounded-lg border border-border bg-background p-4">
             <dt className="text-xs font-medium text-muted">{row.label}</dt>
             <dd className="mt-1 text-lg font-bold text-foreground">{row.value}</dd>
+            {row.rub !== null && (
+              <dd className="text-xs text-muted">≈ {fmtRub(row.rub)}</dd>
+            )}
           </div>
         ))}
       </dl>
