@@ -63,4 +63,6 @@
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-active: var(--sidebar-active);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
 }
