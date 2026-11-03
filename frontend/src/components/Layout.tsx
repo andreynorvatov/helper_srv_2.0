@@ -1,26 +1,30 @@
 import type { ReactNode } from 'react'
+import type { TabId } from '../types'
+import Tabs from './ui/Tabs'
 
 interface LayoutProps {
+  activeTab: TabId
+  onTabChange: (id: TabId) => void
   children: ReactNode
 }
 
-export default function Layout({ children }: LayoutProps) {
+const TABS: Array<{ id: TabId; label: string }> = [
+  { id: 'balance', label: 'Баланс' },
+  { id: 'profile', label: 'Расчёт профиля' },
+  { id: 'docs', label: 'API Docs' },
+]
+
+export default function Layout({ activeTab, onTabChange, children }: LayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
-      <header className="bg-slate-900 text-white">
-        <div className="mx-auto max-w-5xl px-4 py-4 flex items-center justify-between">
+    <div className="min-h-screen flex bg-slate-50 text-slate-900">
+      <aside className="w-56 shrink-0 bg-slate-900 text-white flex flex-col">
+        <div className="px-4 py-5">
           <h1 className="text-lg font-semibold">Helper Service</h1>
-          <span className="text-sm text-slate-400">FastAPI + React</span>
         </div>
-      </header>
+        <Tabs tabs={TABS} active={activeTab} onChange={onTabChange} />
+      </aside>
 
       <main className="flex-1 mx-auto w-full max-w-5xl px-4 py-8">{children}</main>
-
-      <footer className="border-t border-slate-200">
-        <div className="mx-auto max-w-5xl px-4 py-4 text-sm text-slate-500">
-          Данные из внешних API — через бек-прокси, ключи на сервере.
-        </div>
-      </footer>
     </div>
   )
 }

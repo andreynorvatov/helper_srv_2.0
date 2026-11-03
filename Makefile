@@ -7,7 +7,7 @@ help:
 	@echo "  make dev-backend    — только бек (uvicorn --reload :8000)"
 	@echo "  make dev-frontend   — только фронт (vite :5173)"
 	@echo "  make build          — docker compose build"
-	@echo "  make up             — docker compose up -d"
+	@echo "  make up             — build + docker compose up -d (одна команда для проверки)"
 	@echo "  make down           — docker compose down"
 	@echo "  make logs           — логи контейнеров"
 	@echo "  make health         — curl /health"
@@ -31,7 +31,7 @@ dev-frontend:
 build:
 	docker compose build
 
-up:
+up: build
 	docker compose up -d
 
 down:
